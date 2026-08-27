@@ -1,45 +1,19 @@
-schema = """
+DB_SCHEMA = """
 Table: users
-Columns: 
-- user_id
--first_name
--email
--city
--address
+Columns: user_id, first_name, email, city, address
 
-tables:orders
-columns:
--cart_id
--user_id
--total
--total_products
+Table: orders
+Columns: cart_id, user_id, total, total_products
 
-tables:order_items
-columns:
--product_id
--cart_id
--user_id
--quantity
--price
+Table: order_items
+Columns: product_id, cart_id, user_id, quantity, price
 
-tables:products
-columns :
--product_id
--title
--category
--stock
+Table: products
+Columns: product_id, title, category, stock
 
-tables:products_review
-columns:
--product_id
--review-name
--reviewer_email
--rating
--comment
+Table: products_review
+Columns: product_id, review_name, reviewer_email, rating, comment
 
-tables:product_tags
-cilumns:
--product_id
--tag
-
+Table: product_tags
+Columns: product_id, tag
 """
