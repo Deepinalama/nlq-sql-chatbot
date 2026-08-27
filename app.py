@@ -46,12 +46,23 @@ def connect_to_live_database():
         sslmode="require",
     )
 
-db_conn = connect_to_live_database()
+def get_db_connection():
+    """Returns a live DB connection, transparently reconnecting if the
+    cached one has died (e.g. Neon auto-suspended it after inactivity)."""
+    conn = connect_to_live_database()
+    try:
+       
+        if conn.closed != 0:
+            raise psycopg2.OperationalError("cached connection is closed")
+        cur = conn.cursor()
+        cur.execute("SELECT 1")
+        cur.close()
+    except (psycopg2.OperationalError, psycopg2.InterfaceError):
+        connect_to_live_database.clear()  
+        conn = connect_to_live_database() 
+    return conn
 
 
-
-# SAFETY GUARD — only allow read-only SELECT queries
-# Blocks any statement that could modify or destroy data,
 
 FORBIDDEN_KEYWORDS = [
     "DROP", "DELETE", "UPDATE", "INSERT", "ALTER", "TRUNCATE",
@@ -63,15 +74,15 @@ def is_safe_select(sql: str) -> bool:
     """Returns True only if the query is a single, read-only SELECT statement."""
     cleaned = sql.strip().rstrip(";")
 
-    # Must start with SELECT (allowing an optional leading WITH for CTEs)
+   
     if not re.match(r"^\s*(WITH\b.*?\bSELECT|SELECT)\b", cleaned, re.IGNORECASE | re.DOTALL):
         return False
 
-    # Reject multiple statements stacked together
+
     if ";" in cleaned:
         return False
 
-    # Reject any forbidden keyword appearing as a whole word
+    
     upper_sql = cleaned.upper()
     for word in FORBIDDEN_KEYWORDS:
         if re.search(rf"\b{word}\b", upper_sql):
@@ -80,8 +91,6 @@ def is_safe_select(sql: str) -> bool:
     return True
 
 
-
-# STREAMLIT INTERFACE
 
 st.title("Database Chatbot")
 st.write(
@@ -122,7 +131,7 @@ if user_question:
             )
 
             generated_sql = ai_response.choices[0].message.content.strip()
-            # Strip accidental markdown fences if the model adds them anyway
+      
             generated_sql = re.sub(r"^```sql|```$", "", generated_sql, flags=re.IGNORECASE).strip()
 
             st.markdown("Generated Query")
@@ -134,7 +143,7 @@ if user_question:
                     "Try rephrasing your question."
                 )
             else:
-                df_results = pd.read_sql_query(generated_sql, db_conn)
+                df_results = pd.read_sql_query(generated_sql, get_db_connection())
 
                 st.markdown("Query Results")
                 if not df_results.empty:
