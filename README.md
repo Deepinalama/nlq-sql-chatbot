@@ -3,6 +3,12 @@ NLQ SQL Chatbot — Natural Language to SQL with AI
 An AI-powered chatbot that converts **natural language questions** into **SQL queries**, executes them on a **PostgreSQL** database, and visualizes results with **interactive dashboards**.
 
 > 🔗 Built on top of the [Ecommerce ETL Pipeline](https://github.com/Deepinalama/ecommerce-etl-pipeline) — demonstrating an end-to-end workflow from data engineering to AI-powered analytics.
+>
+> 🔗 **[Try the live demo](https://ask-my-database.streamlit.app/)**
+
+[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://your-app-name.streamlit.app)
+
+Ask questions about ecommerce data in plain English — no setup required, just click and try it.
 
 ---
 
