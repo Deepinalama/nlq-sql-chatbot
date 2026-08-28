@@ -59,7 +59,7 @@ def get_db_connection():
         cur.close()
     except (psycopg2.OperationalError, psycopg2.InterfaceError):
         connect_to_live_database.clear()  
-        conn = connect_to_live_database() 
+        conn = connect_to_live_database()  
     return conn
 
 
@@ -78,11 +78,11 @@ def is_safe_select(sql: str) -> bool:
     if not re.match(r"^\s*(WITH\b.*?\bSELECT|SELECT)\b", cleaned, re.IGNORECASE | re.DOTALL):
         return False
 
-
+   
     if ";" in cleaned:
         return False
 
-    
+   
     upper_sql = cleaned.upper()
     for word in FORBIDDEN_KEYWORDS:
         if re.search(rf"\b{word}\b", upper_sql):
@@ -131,7 +131,7 @@ if user_question:
             )
 
             generated_sql = ai_response.choices[0].message.content.strip()
-      
+           
             generated_sql = re.sub(r"^```sql|```$", "", generated_sql, flags=re.IGNORECASE).strip()
 
             st.markdown("Generated Query")
